@@ -1,0 +1,42 @@
+{
+    "name": "Orden",
+    "fields": [
+        {
+            "fieldName": "numero",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "firma",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "llavaId",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "primaryKey",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "llaves",
+            "otherEntityRelationshipName": "orden",
+            "relationshipName": "llaveId",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20200703050842",
+    "entityTableName": "orden",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "clientRootFolder": "",
+    "applications": [
+        "firmspap"
+    ]
+}

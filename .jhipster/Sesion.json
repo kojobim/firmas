@@ -1,0 +1,35 @@
+{
+    "name": "Sesion",
+    "fields": [
+        {
+            "fieldName": "clienteId",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "activo",
+            "fieldType": "Boolean"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "sesion",
+            "relationshipName": "clienteId",
+            "otherEntityField": "id",
+            "ownerSide": true
+        }
+    ],
+    "changelogDate": "20200703050840",
+    "entityTableName": "sesion",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "clientRootFolder": "",
+    "applications": [
+        "firmspap"
+    ]
+}

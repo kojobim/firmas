@@ -1,0 +1,47 @@
+{
+    "name": "Llaves",
+    "fields": [
+        {
+            "fieldName": "publica",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "privada",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "text"
+        },
+        {
+            "fieldName": "clienteId",
+            "fieldType": "Integer"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "llaves",
+            "relationshipName": "clienteId",
+            "otherEntityField": "id",
+            "ownerSide": true
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "orden",
+            "otherEntityRelationshipName": "llaveId",
+            "relationshipName": "orden"
+        }
+    ],
+    "changelogDate": "20200703050841",
+    "entityTableName": "llaves",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "clientRootFolder": "",
+    "applications": [
+        "firmspap"
+    ]
+}
