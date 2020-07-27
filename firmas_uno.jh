@@ -1,0 +1,40 @@
+
+application{	
+    config{
+		baseName firmspap,
+        applicationType microservice,
+        packageName com.bim.seguridad,
+        serviceDiscoveryType eureka,
+        authenticationType jwt,
+        prodDatabaseType mysql,
+        cacheProvider ehcache,
+        useSass true,
+        testFrameworks [protractor],
+		languages [es],
+        nativeLanguage es,
+        skipUserManagement false
+	}
+	entities *
+}
+entity Sesion{
+	activo Boolean
+}
+entity Llaves{
+	publica TextBlob,
+    privada TextBlob
+    
+}
+entity Orden{
+	numero String,
+    firma String,
+    llavaId Integer,
+    primaryKey String
+}
+
+relationship OneToOne{
+	Sesion to User,
+    Llaves to User    
+}
+relationship ManyToOne{
+	Orden{llaveId} to User
+}

@@ -1,0 +1,41 @@
+{
+    "name": "Usuario",
+    "fields": [
+        {
+            "fieldName": "nombre",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "contrasenia",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "rol",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "otherEntityName": "llaves",
+            "otherEntityRelationshipName": "usuario",
+            "relationshipName": "llaves",
+            "ownerSide": false
+        }
+    ],
+    "changelogDate": "20200703140724",
+    "entityTableName": "usuario",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "clientRootFolder": "firmspap",
+    "applications": [
+        "firmspap"
+    ],
+    "microserviceName": "firmspap",
+    "searchEngine": false,
+    "databaseType": "sql"
+}
