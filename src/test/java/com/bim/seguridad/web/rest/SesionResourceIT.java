@@ -33,9 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = FirmspapApp.class)
 public class SesionResourceIT {
 
-    private static final Integer DEFAULT_CLIENTE_ID = 1;
-    private static final Integer UPDATED_CLIENTE_ID = 2;
-
     private static final Boolean DEFAULT_ACTIVO = false;
     private static final Boolean UPDATED_ACTIVO = true;
 
@@ -81,7 +78,6 @@ public class SesionResourceIT {
      */
     public static Sesion createEntity(EntityManager em) {
         Sesion sesion = new Sesion()
-            .clienteId(DEFAULT_CLIENTE_ID)
             .activo(DEFAULT_ACTIVO);
         return sesion;
     }
@@ -93,7 +89,6 @@ public class SesionResourceIT {
      */
     public static Sesion createUpdatedEntity(EntityManager em) {
         Sesion sesion = new Sesion()
-            .clienteId(UPDATED_CLIENTE_ID)
             .activo(UPDATED_ACTIVO);
         return sesion;
     }
@@ -118,7 +113,6 @@ public class SesionResourceIT {
         List<Sesion> sesionList = sesionRepository.findAll();
         assertThat(sesionList).hasSize(databaseSizeBeforeCreate + 1);
         Sesion testSesion = sesionList.get(sesionList.size() - 1);
-        assertThat(testSesion.getClienteId()).isEqualTo(DEFAULT_CLIENTE_ID);
         assertThat(testSesion.isActivo()).isEqualTo(DEFAULT_ACTIVO);
     }
 
@@ -153,7 +147,6 @@ public class SesionResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(sesion.getId().intValue())))
-            .andExpect(jsonPath("$.[*].clienteId").value(hasItem(DEFAULT_CLIENTE_ID)))
             .andExpect(jsonPath("$.[*].activo").value(hasItem(DEFAULT_ACTIVO.booleanValue())));
     }
     
@@ -168,7 +161,6 @@ public class SesionResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(sesion.getId().intValue()))
-            .andExpect(jsonPath("$.clienteId").value(DEFAULT_CLIENTE_ID))
             .andExpect(jsonPath("$.activo").value(DEFAULT_ACTIVO.booleanValue()));
     }
 
@@ -193,7 +185,6 @@ public class SesionResourceIT {
         // Disconnect from session so that the updates on updatedSesion are not directly saved in db
         em.detach(updatedSesion);
         updatedSesion
-            .clienteId(UPDATED_CLIENTE_ID)
             .activo(UPDATED_ACTIVO);
 
         restSesionMockMvc.perform(put("/api/sesions")
@@ -205,7 +196,6 @@ public class SesionResourceIT {
         List<Sesion> sesionList = sesionRepository.findAll();
         assertThat(sesionList).hasSize(databaseSizeBeforeUpdate);
         Sesion testSesion = sesionList.get(sesionList.size() - 1);
-        assertThat(testSesion.getClienteId()).isEqualTo(UPDATED_CLIENTE_ID);
         assertThat(testSesion.isActivo()).isEqualTo(UPDATED_ACTIVO);
     }
 

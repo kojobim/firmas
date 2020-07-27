@@ -1,6 +1,8 @@
 package com.bim.seguridad.repository;
 
 import com.bim.seguridad.domain.Llaves;
+import com.bim.seguridad.domain.Usuario;
+
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +13,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface LlavesRepository extends JpaRepository<Llaves, Long> {
-
+	Llaves findByUsuario(Usuario usuario);
+	
 }

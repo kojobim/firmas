@@ -11,7 +11,7 @@
     "nativeLanguage": "es",
     "packageName": "com.bim.seguridad",
     "packageFolder": "com/bim/seguridad",
-    "prodDatabaseType": "mssql",
+    "prodDatabaseType": "mysql",
     "searchEngine": false,
     "serviceDiscoveryType": "eureka",
     "skipClient": true,
@@ -31,8 +31,8 @@
     "creationTimestamp": 1593752943936,
     "entitySuffix": "",
     "dtoSuffix": "DTO",
-    "otherModules": [],
-    "blueprints": []
+    "blueprints": [],
+    "otherModules": []
   },
-  "entities": ["Sesion", "Llaves", "Orden"]
+  "entities": ["Llaves", "Orden", "Usuario"]
 }

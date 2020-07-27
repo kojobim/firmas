@@ -10,21 +10,32 @@
             "fieldType": "String"
         },
         {
-            "fieldName": "llavaId",
-            "fieldType": "Integer"
-        },
-        {
             "fieldName": "primaryKey",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "transaccion",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "operada",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "min",
+                "max"
+            ],
+            "fieldValidateRulesMin": "0",
+            "fieldValidateRulesMax": "1"
         }
     ],
     "relationships": [
         {
-            "relationshipType": "many-to-one",
+            "relationshipType": "many-to-many",
             "otherEntityName": "llaves",
             "otherEntityRelationshipName": "orden",
-            "relationshipName": "llaveId",
-            "otherEntityField": "id"
+            "relationshipName": "llaves",
+            "otherEntityField": "id",
+            "ownerSide": true
         }
     ],
     "changelogDate": "20200703050842",
@@ -35,8 +46,11 @@
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,
     "readOnly": false,
-    "clientRootFolder": "",
+    "clientRootFolder": "firmspap",
     "applications": [
         "firmspap"
-    ]
+    ],
+    "microserviceName": "firmspap",
+    "searchEngine": false,
+    "databaseType": "sql"
 }

@@ -1,11 +1,15 @@
 package com.bim.seguridad.domain;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A Orden.
@@ -18,8 +22,7 @@ public class Orden implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "numero")
@@ -28,15 +31,24 @@ public class Orden implements Serializable {
     @Column(name = "firma")
     private String firma;
 
-    @Column(name = "llava_id")
-    private Integer llavaId;
-
     @Column(name = "primary_key")
     private String primaryKey;
 
-    @ManyToOne
-    @JsonIgnoreProperties("ordens")
-    private Llaves llaveId;
+    @Column(name = "transaccion")
+    private String transaccion;
+
+    @Min(value = 0)
+    @Max(value = 1)
+    @Column(name = "operada")
+    private Integer operada;
+
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "orden_llaves",
+               joinColumns = @JoinColumn(name = "orden_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "llaves_id", referencedColumnName = "id"))
+    @JsonIgnore
+    private Set<Llaves> llaves = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
@@ -73,19 +85,6 @@ public class Orden implements Serializable {
         this.firma = firma;
     }
 
-    public Integer getLlavaId() {
-        return llavaId;
-    }
-
-    public Orden llavaId(Integer llavaId) {
-        this.llavaId = llavaId;
-        return this;
-    }
-
-    public void setLlavaId(Integer llavaId) {
-        this.llavaId = llavaId;
-    }
-
     public String getPrimaryKey() {
         return primaryKey;
     }
@@ -99,17 +98,55 @@ public class Orden implements Serializable {
         this.primaryKey = primaryKey;
     }
 
-    public Llaves getLlaveId() {
-        return llaveId;
+    public String getTransaccion() {
+        return transaccion;
     }
 
-    public Orden llaveId(Llaves llaves) {
-        this.llaveId = llaves;
+    public Orden transaccion(String transaccion) {
+        this.transaccion = transaccion;
         return this;
     }
 
-    public void setLlaveId(Llaves llaves) {
-        this.llaveId = llaves;
+    public void setTransaccion(String transaccion) {
+        this.transaccion = transaccion;
+    }
+
+    public Integer getOperada() {
+        return operada;
+    }
+
+    public Orden operada(Integer operada) {
+        this.operada = operada;
+        return this;
+    }
+
+    public void setOperada(Integer operada) {
+        this.operada = operada;
+    }
+
+    public Set<Llaves> getLlaves() {
+        return llaves;
+    }
+
+    public Orden llaves(Set<Llaves> llaves) {
+        this.llaves = llaves;
+        return this;
+    }
+
+    public Orden addLlaves(Llaves llaves) {
+        this.llaves.add(llaves);
+        llaves.getOrdens().add(this);
+        return this;
+    }
+
+    public Orden removeLlaves(Llaves llaves) {
+        this.llaves.remove(llaves);
+        llaves.getOrdens().remove(this);
+        return this;
+    }
+
+    public void setLlaves(Set<Llaves> llaves) {
+        this.llaves = llaves;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -135,8 +172,9 @@ public class Orden implements Serializable {
             "id=" + getId() +
             ", numero='" + getNumero() + "'" +
             ", firma='" + getFirma() + "'" +
-            ", llavaId=" + getLlavaId() +
             ", primaryKey='" + getPrimaryKey() + "'" +
+            ", transaccion='" + getTransaccion() + "'" +
+            ", operada=" + getOperada() +
             "}";
     }
 }

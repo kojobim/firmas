@@ -1,4 +1,5 @@
 package com.bim.seguridad.domain;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -19,27 +20,27 @@ public class Llaves implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Lob
-    @Column(name = "publica")
-    private String publica;
+    @Column(name = "privada")
+    private byte[] privada;
+
+
 
     @Lob
-    @Column(name = "privada")
-    private String privada;
+    @Column(name = "publica")
+    private byte[] publica;
 
-    @Column(name = "cliente_id")
-    private Integer clienteId;
 
     @OneToOne
     @JoinColumn(unique = true)
-    private User clienteId;
+    private Usuario usuario;
 
-    @OneToMany(mappedBy = "llaveId")
+    @ManyToMany(mappedBy = "llaves")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JsonIgnore
     private Set<Orden> ordens = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -51,56 +52,45 @@ public class Llaves implements Serializable {
         this.id = id;
     }
 
-    public String getPublica() {
-        return publica;
-    }
-
-    public Llaves publica(String publica) {
-        this.publica = publica;
-        return this;
-    }
-
-    public void setPublica(String publica) {
-        this.publica = publica;
-    }
-
-    public String getPrivada() {
+    public byte[] getPrivada() {
         return privada;
     }
 
-    public Llaves privada(String privada) {
+    public Llaves privada(byte[] privada) {
         this.privada = privada;
         return this;
     }
 
-    public void setPrivada(String privada) {
+    public void setPrivada(byte[] privada) {
         this.privada = privada;
     }
 
-    public Integer getClienteId() {
-        return clienteId;
+    
+    public byte[] getPublica() {
+        return publica;
     }
 
-    public Llaves clienteId(Integer clienteId) {
-        this.clienteId = clienteId;
+    public Llaves publica(byte[] publica) {
+        this.publica = publica;
         return this;
     }
 
-    public void setClienteId(Integer clienteId) {
-        this.clienteId = clienteId;
+    public void setPublica(byte[] publica) {
+        this.publica = publica;
     }
 
-    public User getClienteId() {
-        return clienteId;
+
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public Llaves clienteId(User user) {
-        this.clienteId = user;
+    public Llaves usuario(Usuario usuario) {
+        this.usuario = usuario;
         return this;
     }
 
-    public void setClienteId(User user) {
-        this.clienteId = user;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Set<Orden> getOrdens() {
@@ -114,13 +104,13 @@ public class Llaves implements Serializable {
 
     public Llaves addOrden(Orden orden) {
         this.ordens.add(orden);
-        orden.setLlaveId(this);
+        orden.getLlaves().add(this);
         return this;
     }
 
     public Llaves removeOrden(Orden orden) {
         this.ordens.remove(orden);
-        orden.setLlaveId(null);
+        orden.getLlaves().remove(this);
         return this;
     }
 
@@ -149,9 +139,8 @@ public class Llaves implements Serializable {
     public String toString() {
         return "Llaves{" +
             "id=" + getId() +
+            ", privada='" + getPrivada() + "'" +            
             ", publica='" + getPublica() + "'" +
-            ", privada='" + getPrivada() + "'" +
-            ", clienteId=" + getClienteId() +
             "}";
     }
 }

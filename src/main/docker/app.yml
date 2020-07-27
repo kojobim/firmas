@@ -8,12 +8,12 @@ services:
       - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/eureka
       - SPRING_CLOUD_CONFIG_URI=http://admin:$${jhipster.registry.password}@jhipster-registry:8761/config
-      - SPRING_DATASOURCE_URL=jdbc:sqlserver://firmspap-mssql:1433;database=firmspap
+      - SPRING_DATASOURCE_URL=jdbc:mysql://firmspap-mysql:3306/firmspap?useUnicode=true&characterEncoding=utf8&useSSL=false&createDatabaseIfNotExist=true
       - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
-  firmspap-mssql:
+  firmspap-mysql:
     extends:
-      file: mssql.yml
-      service: firmspap-mssql
+      file: mysql.yml
+      service: firmspap-mysql
   jhipster-registry:
     extends:
       file: jhipster-registry.yml

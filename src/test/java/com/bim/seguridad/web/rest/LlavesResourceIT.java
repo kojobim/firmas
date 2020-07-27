@@ -34,14 +34,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = FirmspapApp.class)
 public class LlavesResourceIT {
 
-    private static final String DEFAULT_PUBLICA = "AAAAAAAAAA";
-    private static final String UPDATED_PUBLICA = "BBBBBBBBBB";
+    private static final byte[] DEFAULT_PRIVADA = TestUtil.createByteArray(1, "0");
+    private static final byte[] UPDATED_PRIVADA = TestUtil.createByteArray(1, "1");
+    private static final byte[] DEFAULT_PRIVADA_CONTENT_TYPE = TestUtil.createByteArray(1, "1");
+//    private static final String UPDATED_PRIVADA_CONTENT_TYPE = "image/png";
 
-    private static final String DEFAULT_PRIVADA = "AAAAAAAAAA";
-    private static final String UPDATED_PRIVADA = "BBBBBBBBBB";
-
-    private static final Integer DEFAULT_CLIENTE_ID = 1;
-    private static final Integer UPDATED_CLIENTE_ID = 2;
+    private static final byte[] DEFAULT_PUBLICA = TestUtil.createByteArray(1, "0");
+    private static final byte[] UPDATED_PUBLICA = TestUtil.createByteArray(1, "1");
+    private static final String DEFAULT_PUBLICA_CONTENT_TYPE = "image/jpg";
+//    private static final String UPDATED_PUBLICA_CONTENT_TYPE = "image/png";
 
     @Autowired
     private LlavesRepository llavesRepository;
@@ -85,9 +86,8 @@ public class LlavesResourceIT {
      */
     public static Llaves createEntity(EntityManager em) {
         Llaves llaves = new Llaves()
-            .publica(DEFAULT_PUBLICA)
             .privada(DEFAULT_PRIVADA)
-            .clienteId(DEFAULT_CLIENTE_ID);
+            .publica(DEFAULT_PUBLICA);
         return llaves;
     }
     /**
@@ -98,9 +98,8 @@ public class LlavesResourceIT {
      */
     public static Llaves createUpdatedEntity(EntityManager em) {
         Llaves llaves = new Llaves()
-            .publica(UPDATED_PUBLICA)
             .privada(UPDATED_PRIVADA)
-            .clienteId(UPDATED_CLIENTE_ID);
+            .publica(UPDATED_PUBLICA);
         return llaves;
     }
 
@@ -124,9 +123,8 @@ public class LlavesResourceIT {
         List<Llaves> llavesList = llavesRepository.findAll();
         assertThat(llavesList).hasSize(databaseSizeBeforeCreate + 1);
         Llaves testLlaves = llavesList.get(llavesList.size() - 1);
-        assertThat(testLlaves.getPublica()).isEqualTo(DEFAULT_PUBLICA);
         assertThat(testLlaves.getPrivada()).isEqualTo(DEFAULT_PRIVADA);
-        assertThat(testLlaves.getClienteId()).isEqualTo(DEFAULT_CLIENTE_ID);
+        assertThat(testLlaves.getPublica()).isEqualTo(DEFAULT_PUBLICA);
     }
 
     @Test
@@ -160,9 +158,10 @@ public class LlavesResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(llaves.getId().intValue())))
-            .andExpect(jsonPath("$.[*].publica").value(hasItem(DEFAULT_PUBLICA.toString())))
-            .andExpect(jsonPath("$.[*].privada").value(hasItem(DEFAULT_PRIVADA.toString())))
-            .andExpect(jsonPath("$.[*].clienteId").value(hasItem(DEFAULT_CLIENTE_ID)));
+            .andExpect(jsonPath("$.[*].privadaContentType").value(hasItem(DEFAULT_PRIVADA_CONTENT_TYPE)))
+            .andExpect(jsonPath("$.[*].privada").value(hasItem(Base64Utils.encodeToString(DEFAULT_PRIVADA))))
+            .andExpect(jsonPath("$.[*].publicaContentType").value(hasItem(DEFAULT_PUBLICA_CONTENT_TYPE)))
+            .andExpect(jsonPath("$.[*].publica").value(hasItem(Base64Utils.encodeToString(DEFAULT_PUBLICA))));
     }
     
     @Test
@@ -176,9 +175,10 @@ public class LlavesResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(llaves.getId().intValue()))
-            .andExpect(jsonPath("$.publica").value(DEFAULT_PUBLICA.toString()))
-            .andExpect(jsonPath("$.privada").value(DEFAULT_PRIVADA.toString()))
-            .andExpect(jsonPath("$.clienteId").value(DEFAULT_CLIENTE_ID));
+            .andExpect(jsonPath("$.privadaContentType").value(DEFAULT_PRIVADA_CONTENT_TYPE))
+            .andExpect(jsonPath("$.privada").value(Base64Utils.encodeToString(DEFAULT_PRIVADA)))
+            .andExpect(jsonPath("$.publicaContentType").value(DEFAULT_PUBLICA_CONTENT_TYPE))
+            .andExpect(jsonPath("$.publica").value(Base64Utils.encodeToString(DEFAULT_PUBLICA)));
     }
 
     @Test
@@ -202,9 +202,8 @@ public class LlavesResourceIT {
         // Disconnect from session so that the updates on updatedLlaves are not directly saved in db
         em.detach(updatedLlaves);
         updatedLlaves
-            .publica(UPDATED_PUBLICA)
             .privada(UPDATED_PRIVADA)
-            .clienteId(UPDATED_CLIENTE_ID);
+            .publica(UPDATED_PUBLICA);
 
         restLlavesMockMvc.perform(put("/api/llaves")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -215,9 +214,8 @@ public class LlavesResourceIT {
         List<Llaves> llavesList = llavesRepository.findAll();
         assertThat(llavesList).hasSize(databaseSizeBeforeUpdate);
         Llaves testLlaves = llavesList.get(llavesList.size() - 1);
-        assertThat(testLlaves.getPublica()).isEqualTo(UPDATED_PUBLICA);
         assertThat(testLlaves.getPrivada()).isEqualTo(UPDATED_PRIVADA);
-        assertThat(testLlaves.getClienteId()).isEqualTo(UPDATED_CLIENTE_ID);
+        assertThat(testLlaves.getPublica()).isEqualTo(UPDATED_PUBLICA);
     }
 
     @Test

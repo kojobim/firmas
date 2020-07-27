@@ -2,34 +2,32 @@
     "name": "Llaves",
     "fields": [
         {
-            "fieldName": "publica",
-            "fieldType": "byte[]",
-            "fieldTypeBlobContent": "text"
-        },
-        {
             "fieldName": "privada",
             "fieldType": "byte[]",
-            "fieldTypeBlobContent": "text"
+            "fieldTypeBlobContent": "image"
         },
         {
-            "fieldName": "clienteId",
-            "fieldType": "Integer"
+            "fieldName": "publica",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "image"
         }
     ],
     "relationships": [
         {
             "relationshipType": "one-to-one",
-            "otherEntityName": "user",
+            "otherEntityName": "usuario",
             "otherEntityRelationshipName": "llaves",
-            "relationshipName": "clienteId",
+            "relationshipName": "usuario",
             "otherEntityField": "id",
             "ownerSide": true
         },
         {
-            "relationshipType": "one-to-many",
+            "relationshipType": "many-to-many",
             "otherEntityName": "orden",
-            "otherEntityRelationshipName": "llaveId",
-            "relationshipName": "orden"
+            "otherEntityRelationshipName": "llaves",
+            "relationshipName": "orden",
+            "otherEntityField": "id",
+            "ownerSide": false
         }
     ],
     "changelogDate": "20200703050841",
@@ -40,8 +38,11 @@
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,
     "readOnly": false,
-    "clientRootFolder": "",
+    "clientRootFolder": "firmspap",
     "applications": [
         "firmspap"
-    ]
+    ],
+    "microserviceName": "firmspap",
+    "searchEngine": false,
+    "databaseType": "sql"
 }

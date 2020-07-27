@@ -7,9 +7,11 @@ import com.bim.seguridad.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -19,11 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.bim.seguridad.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -39,14 +43,20 @@ public class OrdenResourceIT {
     private static final String DEFAULT_FIRMA = "AAAAAAAAAA";
     private static final String UPDATED_FIRMA = "BBBBBBBBBB";
 
-    private static final Integer DEFAULT_LLAVA_ID = 1;
-    private static final Integer UPDATED_LLAVA_ID = 2;
-
     private static final String DEFAULT_PRIMARY_KEY = "AAAAAAAAAA";
     private static final String UPDATED_PRIMARY_KEY = "BBBBBBBBBB";
 
+    private static final String DEFAULT_TRANSACCION = "AAAAAAAAAA";
+    private static final String UPDATED_TRANSACCION = "BBBBBBBBBB";
+
+    private static final Integer DEFAULT_OPERADA = 0;
+    private static final Integer UPDATED_OPERADA = 1;
+
     @Autowired
     private OrdenRepository ordenRepository;
+
+    @Mock
+    private OrdenRepository ordenRepositoryMock;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -89,8 +99,9 @@ public class OrdenResourceIT {
         Orden orden = new Orden()
             .numero(DEFAULT_NUMERO)
             .firma(DEFAULT_FIRMA)
-            .llavaId(DEFAULT_LLAVA_ID)
-            .primaryKey(DEFAULT_PRIMARY_KEY);
+            .primaryKey(DEFAULT_PRIMARY_KEY)
+            .transaccion(DEFAULT_TRANSACCION)
+            .operada(DEFAULT_OPERADA);
         return orden;
     }
     /**
@@ -103,8 +114,9 @@ public class OrdenResourceIT {
         Orden orden = new Orden()
             .numero(UPDATED_NUMERO)
             .firma(UPDATED_FIRMA)
-            .llavaId(UPDATED_LLAVA_ID)
-            .primaryKey(UPDATED_PRIMARY_KEY);
+            .primaryKey(UPDATED_PRIMARY_KEY)
+            .transaccion(UPDATED_TRANSACCION)
+            .operada(UPDATED_OPERADA);
         return orden;
     }
 
@@ -130,8 +142,9 @@ public class OrdenResourceIT {
         Orden testOrden = ordenList.get(ordenList.size() - 1);
         assertThat(testOrden.getNumero()).isEqualTo(DEFAULT_NUMERO);
         assertThat(testOrden.getFirma()).isEqualTo(DEFAULT_FIRMA);
-        assertThat(testOrden.getLlavaId()).isEqualTo(DEFAULT_LLAVA_ID);
         assertThat(testOrden.getPrimaryKey()).isEqualTo(DEFAULT_PRIMARY_KEY);
+        assertThat(testOrden.getTransaccion()).isEqualTo(DEFAULT_TRANSACCION);
+        assertThat(testOrden.getOperada()).isEqualTo(DEFAULT_OPERADA);
     }
 
     @Test
@@ -167,10 +180,44 @@ public class OrdenResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(orden.getId().intValue())))
             .andExpect(jsonPath("$.[*].numero").value(hasItem(DEFAULT_NUMERO)))
             .andExpect(jsonPath("$.[*].firma").value(hasItem(DEFAULT_FIRMA)))
-            .andExpect(jsonPath("$.[*].llavaId").value(hasItem(DEFAULT_LLAVA_ID)))
-            .andExpect(jsonPath("$.[*].primaryKey").value(hasItem(DEFAULT_PRIMARY_KEY)));
+            .andExpect(jsonPath("$.[*].primaryKey").value(hasItem(DEFAULT_PRIMARY_KEY)))
+            .andExpect(jsonPath("$.[*].transaccion").value(hasItem(DEFAULT_TRANSACCION)))
+            .andExpect(jsonPath("$.[*].operada").value(hasItem(DEFAULT_OPERADA)));
     }
     
+    @SuppressWarnings({"unchecked"})
+    public void getAllOrdensWithEagerRelationshipsIsEnabled() throws Exception {
+        OrdenResource ordenResource = new OrdenResource(ordenRepositoryMock);
+        when(ordenRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        MockMvc restOrdenMockMvc = MockMvcBuilders.standaloneSetup(ordenResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restOrdenMockMvc.perform(get("/api/ordens?eagerload=true"))
+        .andExpect(status().isOk());
+
+        verify(ordenRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public void getAllOrdensWithEagerRelationshipsIsNotEnabled() throws Exception {
+        OrdenResource ordenResource = new OrdenResource(ordenRepositoryMock);
+            when(ordenRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+            MockMvc restOrdenMockMvc = MockMvcBuilders.standaloneSetup(ordenResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restOrdenMockMvc.perform(get("/api/ordens?eagerload=true"))
+        .andExpect(status().isOk());
+
+            verify(ordenRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
     @Test
     @Transactional
     public void getOrden() throws Exception {
@@ -184,8 +231,9 @@ public class OrdenResourceIT {
             .andExpect(jsonPath("$.id").value(orden.getId().intValue()))
             .andExpect(jsonPath("$.numero").value(DEFAULT_NUMERO))
             .andExpect(jsonPath("$.firma").value(DEFAULT_FIRMA))
-            .andExpect(jsonPath("$.llavaId").value(DEFAULT_LLAVA_ID))
-            .andExpect(jsonPath("$.primaryKey").value(DEFAULT_PRIMARY_KEY));
+            .andExpect(jsonPath("$.primaryKey").value(DEFAULT_PRIMARY_KEY))
+            .andExpect(jsonPath("$.transaccion").value(DEFAULT_TRANSACCION))
+            .andExpect(jsonPath("$.operada").value(DEFAULT_OPERADA));
     }
 
     @Test
@@ -211,8 +259,9 @@ public class OrdenResourceIT {
         updatedOrden
             .numero(UPDATED_NUMERO)
             .firma(UPDATED_FIRMA)
-            .llavaId(UPDATED_LLAVA_ID)
-            .primaryKey(UPDATED_PRIMARY_KEY);
+            .primaryKey(UPDATED_PRIMARY_KEY)
+            .transaccion(UPDATED_TRANSACCION)
+            .operada(UPDATED_OPERADA);
 
         restOrdenMockMvc.perform(put("/api/ordens")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -225,8 +274,9 @@ public class OrdenResourceIT {
         Orden testOrden = ordenList.get(ordenList.size() - 1);
         assertThat(testOrden.getNumero()).isEqualTo(UPDATED_NUMERO);
         assertThat(testOrden.getFirma()).isEqualTo(UPDATED_FIRMA);
-        assertThat(testOrden.getLlavaId()).isEqualTo(UPDATED_LLAVA_ID);
         assertThat(testOrden.getPrimaryKey()).isEqualTo(UPDATED_PRIMARY_KEY);
+        assertThat(testOrden.getTransaccion()).isEqualTo(UPDATED_TRANSACCION);
+        assertThat(testOrden.getOperada()).isEqualTo(UPDATED_OPERADA);
     }
 
     @Test

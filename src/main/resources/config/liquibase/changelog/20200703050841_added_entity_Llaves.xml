@@ -6,26 +6,24 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    
+        <property name="autoIncrement" value="true"/>
+
     <!--
         Added the entity Llaves.
     -->
     <changeSet id="20200703050841-1" author="jhipster">
         <createTable tableName="llaves">
-            <column name="id" type="bigint">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="publica" type="${clobType}">
+            <column name="privada" type="longblob">
                 <constraints nullable="true" />
             </column>
-            <column name="privada" type="${clobType}">
+            <column name="publica" type="longblob">
                 <constraints nullable="true" />
             </column>
-            <column name="cliente_id" type="integer">
-                <constraints nullable="true" />
-            </column>
-            <column name="cliente_id_id" type="bigint">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_llaves_cliente_id_id" />
+            <column name="usuario_id" type="bigint">
+                <constraints unique="true" nullable="true" uniqueConstraintName="ux_llaves_usuario_id" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
@@ -50,9 +48,10 @@
                   separator=";"
                   tableName="llaves">
             <column name="id" type="numeric"/>
-            <column name="publica" type="clob"/>
-            <column name="privada" type="clob"/>
-            <column name="cliente_id" type="numeric"/>
+            <column name="privada" type="blob"/>
+            <column name="privada_content_type" type="string"/>
+            <column name="publica" type="blob"/>
+            <column name="publica_content_type" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>
     </changeSet>

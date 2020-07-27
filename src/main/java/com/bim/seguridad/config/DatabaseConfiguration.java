@@ -36,7 +36,7 @@ public class DatabaseConfiguration {
      * @throws SQLException if the server failed to start.
      */
     @Bean(initMethod = "start", destroyMethod = "stop")
-    @Profile(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)
+    @Profile(JHipsterConstants.SPRING_PROFILE_CLOUD)
     public Object h2TCPServer() throws SQLException {
         String port = getValidPortForH2();
         log.debug("H2 database is available on port {}", port);

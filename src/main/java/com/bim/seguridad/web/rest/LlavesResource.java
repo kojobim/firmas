@@ -2,12 +2,14 @@ package com.bim.seguridad.web.rest;
 
 import com.bim.seguridad.domain.Llaves;
 import com.bim.seguridad.repository.LlavesRepository;
+import com.bim.seguridad.service.LlavesService;
 import com.bim.seguridad.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional; 
@@ -35,6 +37,9 @@ public class LlavesResource {
     private String applicationName;
 
     private final LlavesRepository llavesRepository;
+    
+    @Autowired
+    private LlavesService llavesService;
 
     public LlavesResource(LlavesRepository llavesRepository) {
         this.llavesRepository = llavesRepository;
@@ -53,7 +58,10 @@ public class LlavesResource {
         if (llaves.getId() != null) {
             throw new BadRequestAlertException("A new llaves cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Llaves result = llavesRepository.save(llaves);
+        
+        List<Llaves> lista=llavesService.createLlaves();
+        lista=llavesRepository.saveAll(lista);
+        Llaves result = lista.get(0);
         return ResponseEntity.created(new URI("/api/llaves/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -74,6 +82,7 @@ public class LlavesResource {
         if (llaves.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        llaves=llavesService.fillLlaves(llaves);
         Llaves result = llavesRepository.save(llaves);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, llaves.getId().toString()))

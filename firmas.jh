@@ -7,7 +7,7 @@ application{
         packageName com.bim.seguridad,
         serviceDiscoveryType eureka,
         authenticationType jwt,
-        prodDatabaseType mssql,
+        prodDatabaseType mysql,
         cacheProvider ehcache,
         useSass true,
         testFrameworks [protractor],
@@ -18,13 +18,12 @@ application{
 }
 
 entity Sesion{
-	clienteId Integer,
-    activo Boolean
+	activo Boolean
 }
 entity Llaves{
 	publica TextBlob,
-    privada TextBlob,
-    clienteId Integer
+    privada TextBlob
+    
 }
 entity Orden{
 	numero String,
@@ -34,8 +33,8 @@ entity Orden{
 }
 
 relationship OneToOne{
-	Sesion{clienteId} to User,
-    Llaves{clienteId} to User
+	Sesion to User,
+    Llaves to User
     
 }
 relationship OneToMany{

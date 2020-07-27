@@ -19,12 +19,12 @@ logging:
     io.github.jhipster: DEBUG
     com.bim.seguridad: DEBUG
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    service-url:
-      defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    service-url:
+#      defaultZone: http://admin:${jhipster.registry.password}@localhost:8761/eureka/
 
 spring:
   profiles:
@@ -43,19 +43,32 @@ spring:
     serialization:
       indent-output: true
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:file:./target/h2db/db/firmspap;DB_CLOSE_DELAY=-1
-    username: firmspap
-    password:
+    type: org.apache.tomcat.jdbc.pool.DataSource
+    #type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:jtds:sybase://172.30.28.69:5000/dbBIM_Consulta
+    #url: jdbc:jtds:sybase://172.30.29.182:5000/dbBIM_SPEI
+    #url: jdbc:sybase:Tds:172.30.28.69:5000/dbBIM_Consulta;DB_CLOSE_DELAY=-1
+    #url: jdbc:h2:file:./target/h2db/db/firmspap;DB_CLOSE_DELAY=-1
+    username: DESA
+    password: 666666
+    #driver-class-name: com.sybase.jdbc3.jdbc.SybDriver
+    driver-class-name: net.sourceforge.jtds.jdbc.Driver
+    tomcat:
+      initial-size: 1
+      max-active: 1
+      max-idle: 1
+      min-idle: 1
+      default-auto-commit: false
+      
+      validation-query: select 1
     hikari:
       poolName: Hikari
-      auto-commit: false
-  h2:
-    console:
-      enabled: false
+      auto-commit: true
+      connection-test-query: select 1
+  
   jpa:
-    database-platform: io.github.jhipster.domain.util.FixedH2Dialect
-    database: H2
+    database-platform: org.hibernate.dialect.SybaseDialect
+    database: sybase
     show-sql: true
     properties:
       hibernate.id.new_generator_mappings: true
@@ -65,7 +78,7 @@ spring:
       hibernate.generate_statistics: false
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
-    contexts: dev, faker
+    contexts: dev
   mail:
     host: localhost
     port: 25
